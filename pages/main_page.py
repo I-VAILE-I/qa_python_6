@@ -13,20 +13,34 @@ class HomePage:
         "Да, пока самокат не привезли. Штрафа не будет, объяснительной записки тоже не попросим. Все же свои.",
         "Да, обязательно. Всем самокатов! И Москве, и Московской области."
      ]
+    button_allow_cookies = [By.ID, "rcc-confirm-button"]
+    heading_id = [By.ID, f"accordion__heading-{id}"]
+    accordion_id = [By.ID, f"accordion__panel-{id}"]
 
-    def __init__(self, driver, id: int):
+    def __init__(self, driver):
         self.driver = driver
+
+    @allure.step('Выставляем айди вопроса')
+    def set_heading_id(self, id: int):
         self.heading_id = [By.ID, f"accordion__heading-{id}"]
+
+    @allure.step('Выставляем айди блока текста')
+    def set_accordion_id(self, id: int):
         self.accordion_id = [By.ID, f"accordion__panel-{id}"]
 
+    @allure.step('Соглашаемся с использованием coockies')
+    def click_to_accept_coockies(self):
+        self.driver.find_element(*self.button_allow_cookies).click()
+
     @allure.step('Кликаем на вопрос')
-    def click_on_question_headin_by_id(self):
+    def click_on_question_headin_by_id(self, id: int):
+        self.set_heading_id(id=id)
         self.driver.find_element(*self.heading_id).click()
 
     @allure.step('Проверяем ответ на вопрос')
     @allure.description('Проверяем ответ на вопрос')
-    def check_text_question_heading(self):
+    def check_text_question_heading(self, id: int):
+        self.set_accordion_id(id=id)
         question_heading_text = self.driver.find_element(*self.accordion_id).text
-        id = self.heading_id[1][-1]
-        assert question_heading_text == self.lst_expected_texts[int(id)]
+        assert question_heading_text == self.lst_expected_texts[id]
 

@@ -1,3 +1,5 @@
+import datetime
+
 import allure
 from selenium.webdriver.common.by import By
 
@@ -17,7 +19,7 @@ class OrderPage:
     next_button = [By.XPATH, "//button[@class='Button_Button__ra12g Button_Middle__1CSJM']"]
     open_selection_date = [By.XPATH, "//input[@placeholder='* Когда привезти самокат']"]
     select_27_02_24_date = [By.XPATH, "//*[text() = '27']"]
-    select_29_02_24_date = [By.XPATH, "//*[text() = '29']"]
+    select_date = []
     dropdown_rent = [By.XPATH, "//div[@class='Dropdown-control']"]
     dropdown_rent_menu_one_day = [By.XPATH, "//*[text() = 'сутки']"]
     dropdown_rent_menu_seven_days = [By.XPATH, "//*[text() = 'семеро суток']"]
@@ -31,6 +33,9 @@ class OrderPage:
 
     def __init__(self, driver):
         self.driver = driver
+
+    def set_date(self, date: int):
+        self.select_date = [By.XPATH, f"//*[text() = '{date}']"]
 
     @allure.step('Кликаем на кнопку "Заказать" сверху справа страницы')
     def click_on_top_order_button(self):
@@ -70,15 +75,21 @@ class OrderPage:
     def next_page(self):
         self.driver.find_element(*self.next_button).click()
 
-    @allure.step('Выбираем 27 февраля')
-    def select_a_27_02_24_date(self):
-        self.driver.find_element(*self.open_selection_date).click()
-        self.driver.find_element(*self.select_27_02_24_date).click()
+    @allure.step(f'Прибавляем к сегодняшней дате 1 или 2 дня')
+    def get_two_days_above(self, days_above: int):
+        return (datetime.datetime.today() + datetime.timedelta(days=days_above)).day
 
-    @allure.step('Выбираем 29 февраля')
-    def select_a_29_02_24_date(self):
+    @allure.step('Выбираем дату +1 дня')
+    def select_one_day_above_date(self):
         self.driver.find_element(*self.open_selection_date).click()
-        self.driver.find_element(*self.select_29_02_24_date).click()
+        self.set_date(date=self.get_two_days_above(days_above=1))
+        self.driver.find_element(*self.select_date).click()
+
+    @allure.step('Выбираем дату +2 дня')
+    def select_two_days_above_date(self):
+        self.driver.find_element(*self.open_selection_date).click()
+        self.set_date(date=self.get_two_days_above(days_above=2))
+        self.driver.find_element(*self.select_date).click()
 
     @allure.step('Выбираем суточную аренду')
     def select_one_days_rent_period(self):
@@ -118,4 +129,8 @@ class OrderPage:
     def check_text_question_heading(self):
         order_text = self.driver.find_element(*self.text_order_finish).text[0:14]
         assert order_text == 'Заказ оформлен'
+
+    @allure.step('Проверяем, что переходить на главную страницу')
+    def check_redirrect_to_main_page(self):
+        assert self.driver.current_url == "https://qa-scooter.praktikum-services.ru/"
 
