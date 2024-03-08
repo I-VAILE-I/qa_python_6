@@ -1,136 +1,102 @@
-import datetime
-
 import allure
-from selenium.webdriver.common.by import By
-
-from helpers import generate_telephone_num
+from pages.base_page import BasePage
 
 
-class OrderPage:
-    order_button_top_page = [By.XPATH, "//button[@class='Button_Button__ra12g']"]
-    order_button_middle_page = [By.XPATH, "//button[@class='Button_Button__ra12g Button_UltraBig__UU3Lp']"]
-    input_name = [By.XPATH, "//input[@placeholder='* Имя']"]
-    input_last_name = [By.XPATH, "//input[@placeholder='* Фамилия']"]
-    input_adress = [By.XPATH, "//input[@placeholder='* Адрес: куда привезти заказ']"]
-    dropbox_station_metro = [By.XPATH, "//input[@placeholder='* Станция метро']"]
-    select_sokol_station = [By.XPATH, "//*[text() = 'Сокол']"]
-    select_salarievo_station = [By.XPATH, "//*[text() = 'Саларьево']"]
-    input_telephone_number = [By.XPATH, "//input[@placeholder='* Телефон: на него позвонит курьер']"]
-    next_button = [By.XPATH, "//button[@class='Button_Button__ra12g Button_Middle__1CSJM']"]
-    open_selection_date = [By.XPATH, "//input[@placeholder='* Когда привезти самокат']"]
-    select_27_02_24_date = [By.XPATH, "//*[text() = '27']"]
-    select_date = []
-    dropdown_rent = [By.XPATH, "//div[@class='Dropdown-control']"]
-    dropdown_rent_menu_one_day = [By.XPATH, "//*[text() = 'сутки']"]
-    dropdown_rent_menu_seven_days = [By.XPATH, "//*[text() = 'семеро суток']"]
-    checkbox_black_colors = [By.XPATH, "//label[@for='black']"]
-    checkbox_grey_colors = [By.XPATH, "//label[@for='grey']"]
-    commentation_for_courier = [By.XPATH, "//input[@class='Input_Input__1iN_Z Input_Responsible__1jDKN']"]
-    button_order_yes = [By.XPATH, "//*[text() = 'Да']"]
-    text_order_finish = [By.XPATH, "//div[@class='Order_ModalHeader__3FDaJ']"]
-    check_order = [By.XPATH, "//*[text() = 'Посмотреть статус']"]
-    samokat_logo = [By.XPATH, "//a[@class='Header_LogoScooter__3lsAR']"]
+class OrderPage(BasePage):
 
     def __init__(self, driver):
         self.driver = driver
 
-    def set_date(self, date: int):
-        self.select_date = [By.XPATH, f"//*[text() = '{date}']"]
+    @allure.step('Соглашаемся с использованием coockies')
+    def click_to_accept_coockies(self, locator):
+        self.click_on_element(locator)
 
     @allure.step('Кликаем на кнопку "Заказать" сверху справа страницы')
-    def click_on_top_order_button(self):
-        self.driver.find_element(*self.order_button_top_page).click()
+    def click_on_top_order_button(self, locator):
+        self.click_on_element(locator)
 
     @allure.step('Кликаем на кнопку "Заказать" по середине страницы')
-    def click_on_middle_order_button(self):
-        self.driver.find_element(*self.order_button_middle_page).click()
+    def click_on_middle_order_button(self, locator):
+        self.click_on_element(locator)
 
     @allure.step('Вписываем имя в заказ')
-    def add_name(self):
-        self.driver.find_element(*self.input_name).send_keys('Андрей')
+    def add_name(self, locator, text):
+        self.input_text_in_field(locator, text)
 
     @allure.step('Вписываем фамилию в заказ')
-    def add_last_name(self):
-        self.driver.find_element(*self.input_last_name).send_keys('Анченко')
+    def add_last_name(self, locator, text):
+        self.input_text_in_field(locator, text)
 
     @allure.step('Вписываем адрес в заказ')
-    def add_adress(self):
-        self.driver.find_element(*self.input_adress).send_keys('Дом колотушкина')
+    def add_adress(self, locator, text):
+        self.input_text_in_field(locator, text)
 
     @allure.step('Выбираем метро "Сокол" из выпадающего списка')
-    def add_metro_station_sokol(self):
-        self.driver.find_element(*self.dropbox_station_metro).click()
-        self.driver.find_element(*self.select_sokol_station).click()
+    def add_metro_station_sokol(self, locator_dropbox, locator_station):
+        self.click_on_element(locator_dropbox)
+        self.click_on_element(locator_station)
 
     @allure.step('Выбираем метро "Саларьево" из выпадающего списка')
-    def add_metro_station_salarievo(self):
-        self.driver.find_element(*self.dropbox_station_metro).click()
-        self.driver.find_element(*self.select_salarievo_station).click()
+    def add_metro_station_salarievo(self, locator_dropbox, locator_station):
+        self.click_on_element(locator_dropbox)
+        self.click_on_element(locator_station)
 
     @allure.step('Вписываем телефонный номер')
-    def add_telephone_number(self):
-        self.driver.find_element(*self.input_telephone_number).send_keys(generate_telephone_num())
+    def add_telephone_number(self, locator, text):
+        self.input_text_in_field(locator, text)
 
     @allure.step('Переходим на следующую страницу')
-    def next_page(self):
-        self.driver.find_element(*self.next_button).click()
-
-    @allure.step(f'Прибавляем к сегодняшней дате 1 или 2 дня')
-    def get_two_days_above(self, days_above: int):
-        return (datetime.datetime.today() + datetime.timedelta(days=days_above)).day
+    def next_page(self, locator):
+        self.click_on_element(locator)
 
     @allure.step('Выбираем дату +1 дня')
-    def select_one_day_above_date(self):
-        self.driver.find_element(*self.open_selection_date).click()
-        self.set_date(date=self.get_two_days_above(days_above=1))
-        self.driver.find_element(*self.select_date).click()
+    def select_one_day_above_date(self, locator_selection_date, locator_date):
+        self.click_on_element(locator_selection_date)
+        self.click_on_element(locator_date)
 
     @allure.step('Выбираем дату +2 дня')
-    def select_two_days_above_date(self):
-        self.driver.find_element(*self.open_selection_date).click()
-        self.set_date(date=self.get_two_days_above(days_above=2))
-        self.driver.find_element(*self.select_date).click()
+    def select_two_days_above_date(self, locator_selection_date, locator_date):
+        self.click_on_element(locator_selection_date)
+        self.click_on_element(locator_date)
 
     @allure.step('Выбираем суточную аренду')
-    def select_one_days_rent_period(self):
-        self.driver.find_element(*self.dropdown_rent).click()
-        self.driver.find_element(*self.dropdown_rent_menu_one_day).click()
+    def select_one_days_rent_period(self, locator_selection_date, locator_date):
+        self.click_on_element(locator_selection_date)
+        self.click_on_element(locator_date)
 
     @allure.step('Выбираем семидневную аренду')
-    def select_seven_days_rent_period(self):
-        self.driver.find_element(*self.dropdown_rent).click()
-        self.driver.find_element(*self.dropdown_rent_menu_seven_days).click()
+    def select_seven_days_rent_period(self, locator_selection_date, locator_date):
+        self.click_on_element(locator_selection_date)
+        self.click_on_element(locator_date)
 
     @allure.step('Выбираем черный цвет самоката')
-    def select_black_color(self):
-        self.driver.find_element(*self.checkbox_black_colors).click()
+    def select_black_color(self, locator):
+        self.click_on_element(locator)
 
     @allure.step('Выбираем серый цвет самоката')
-    def select_grey_color(self):
-        self.driver.find_element(*self.checkbox_grey_colors).click()
+    def select_grey_color(self, locator):
+        self.click_on_element(locator)
 
     @allure.step('Вписываем комментарий курьеру')
-    def add_comment_for_courier(self):
-        self.driver.find_element(*self.commentation_for_courier).send_keys('Жду на остановке :]')
+    def add_comment_for_courier(self, locator, text):
+        self.input_text_in_field(locator, text)
 
     @allure.step('Соглашаемся с условиями и нажимаем на "Да"')
-    def click_on_button_yes(self):
-        self.driver.find_element(*self.button_order_yes).click()
+    def click_on_button_yes(self, locator):
+        self.click_on_element(locator)
 
     @allure.step('Кликаем на кнопку "Посмотреть статус"')
-    def go_to_order_status_page(self):
-        self.driver.find_element(*self.check_order).click()
+    def go_to_order_status_page(self, locator):
+        self.click_on_element(locator)
 
     @allure.step('Нажимаем на логотип для "Самокат" для перехода на главную страницу')
-    def go_to_main_page_by_click_on_logo(self):
-        self.driver.find_element(*self.samokat_logo).click()
+    def go_to_main_page_by_click_on_logo(self, locator):
+        self.click_on_element(locator)
 
     @allure.step('Проверяем, что окно статуса имеет текст "Заказ оформлен"')
-    def check_text_question_heading(self):
-        order_text = self.driver.find_element(*self.text_order_finish).text[0:14]
-        assert order_text == 'Заказ оформлен'
+    def check_text_question_heading(self, locator, text):
+        return self.get_text_element(locator)[0:14] == text
 
     @allure.step('Проверяем, что переходить на главную страницу')
-    def check_redirrect_to_main_page(self):
-        assert self.driver.current_url == "https://qa-scooter.praktikum-services.ru/"
-
+    def check_redirrect_to_main_page(self, page_url):
+        return self.get_current_urls() == page_url
