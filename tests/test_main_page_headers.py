@@ -1,7 +1,6 @@
 import allure
 import pytest
 from data import lst_expected_texts
-from locators.main_page_locators import get_heading_locator_with_id, get_accordion_locator_with_id, MainPageLocators
 from pages.main_page import HomePage
 
 
@@ -17,7 +16,7 @@ class TestMainPageHeadings:
             id: int,
     ):
         home_page = HomePage(driver=driver)
-        home_page.click_to_accept_coockies(locator=MainPageLocators.COOCKIES_ALLOW)
-        home_page.click_on_question_headin_by_id(get_heading_locator_with_id(id=id))
-        answer_text = home_page.get_answer_on_question_headin_by_id(get_accordion_locator_with_id(id=id))
+        home_page.click_to_accept_coockies()
+        home_page.click_on_question_headin_by_id(id=id)
+        answer_text = home_page.get_answer_on_question_headin_by_id(id=id)
         assert home_page.check_text_question_heading(question_text=answer_text, expected_text=lst_expected_texts[id])

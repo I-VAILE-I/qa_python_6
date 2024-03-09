@@ -25,6 +25,11 @@ class OrderPageLocators:
     text_order_finish = [By.XPATH, "//div[@class='Order_ModalHeader__3FDaJ']"]
     check_order = [By.XPATH, "//*[text() = 'Посмотреть статус']"]
     samokat_logo = [By.XPATH, "//a[@class='Header_LogoScooter__3lsAR']"]
+    yandex_logo = [By.XPATH, "//a[@class='Header_LogoYandex__3TSOI']"]
+
+
+class DzenPage:
+    cross_icon = [By.XPATH, "//span[@class='gda72c665 v126da801 c82600e39 r55dfcaa7']"]
 
 
 def set_date(date: int):
